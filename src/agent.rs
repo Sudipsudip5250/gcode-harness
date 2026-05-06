@@ -44,11 +44,11 @@ use std::sync::{Arc, LazyLock, Mutex as StdMutex};
 use std::time::{Duration, Instant};
 use tokio::sync::{broadcast, mpsc};
 
-use interrupts::{NoToolCallOutcome, PostToolInterruptOutcome};
 pub use gcode_agent_runtime::{
     BackgroundToolSignal, GracefulShutdownSignal, InterruptSignal, SoftInterruptMessage,
     SoftInterruptQueue, SoftInterruptSource, StreamError,
 };
+use interrupts::{NoToolCallOutcome, PostToolInterruptOutcome};
 
 const GCODE_NATIVE_TOOLS: &[&str] = &["selfdev", "communicate"];
 static RECOVERED_TEXT_WRAPPED_TOOL_CALLS: std::sync::atomic::AtomicU64 =

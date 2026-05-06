@@ -130,7 +130,10 @@ fn resolve_callback_or_manual_code_validates_state_for_callback_input() {
 #[test]
 fn uses_env_credentials_for_manual_auth_url() {
     let _guard = lock_test_env();
-    crate::env::set_var(GEMINI_CLIENT_ID_ENV, "test-client-id.apps.googleusercontent.com");
+    crate::env::set_var(
+        GEMINI_CLIENT_ID_ENV,
+        "test-client-id.apps.googleusercontent.com",
+    );
     crate::env::set_var(GEMINI_CLIENT_SECRET_ENV, "test-client-secret");
 
     let url = build_manual_auth_url(GEMINI_MANUAL_REDIRECT_URI, "challenge-123", "state-123")
