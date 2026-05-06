@@ -1,0 +1,273 @@
+[package]
+name = "gcode"
+version = "0.11.4"
+description = "Possibly the greatest coding agent ever built — blazing-fast TUI, multi-model, swarm coordination, 30+ tools"
+edition = "2024"
+autobins = false
+
+[workspace]
+members = [
+    ".",
+    "crates/gcode-agent-runtime",
+    "crates/gcode-ambient-types",
+    "crates/gcode-auth-types",
+    "crates/gcode-embedding",
+    "crates/gcode-gateway-types",
+    "crates/gcode-import-core",
+    "crates/gcode-pdf",
+    "crates/gcode-background-types",
+    "crates/gcode-batch-types",
+    "crates/gcode-build-support",
+    "crates/gcode-compaction-core",
+    "crates/gcode-config-types",
+    "crates/gcode-core",
+    "crates/gcode-memory-types",
+    "crates/gcode-message-types",
+    "crates/gcode-overnight-core",
+    "crates/gcode-plan",
+    "crates/gcode-swarm-core",
+    "crates/gcode-protocol",
+    "crates/gcode-selfdev-types",
+    "crates/gcode-session-types",
+    "crates/gcode-storage",
+    "crates/gcode-side-panel-types",
+    "crates/gcode-azure-auth",
+    "crates/gcode-notify-email",
+    "crates/gcode-provider-metadata",
+    "crates/gcode-provider-core",
+    "crates/gcode-provider-openrouter",
+    "crates/gcode-provider-openai",
+    "crates/gcode-provider-gemini",
+    "crates/gcode-tui-markdown",
+    "crates/gcode-tui-messages",
+    "crates/gcode-usage-types",
+    "crates/gcode-tui-core",
+    "crates/gcode-tui-mermaid",
+    "crates/gcode-task-types",
+    "crates/gcode-tool-core",
+    "crates/gcode-tool-types",
+    "crates/gcode-tui-account-picker",
+    "crates/gcode-tui-render",
+    "crates/gcode-tui-session-picker",
+    "crates/gcode-tui-style",
+    "crates/gcode-tui-tool-display",
+    "crates/gcode-tui-usage-overlay",
+    "crates/gcode-update-core",
+    "crates/gcode-terminal-launch",
+    "crates/gcode-tui-workspace",
+    "crates/gcode-mobile-core",
+    "crates/gcode-mobile-sim",
+    "crates/gcode-desktop",
+]
+
+[lib]
+name = "gcode"
+path = "src/lib.rs"
+
+[[bin]]
+name = "gcode"
+path = "src/main.rs"
+
+[[bin]]
+name = "test_api"
+path = "src/bin/test_api.rs"
+
+[[bin]]
+name = "gcode-harness"
+path = "src/bin/harness.rs"
+
+[[bin]]
+name = "session_memory_bench"
+path = "src/bin/session_memory_bench.rs"
+required-features = ["dev-bins"]
+
+[[bin]]
+name = "mermaid_side_panel_probe"
+path = "src/bin/mermaid_side_panel_probe.rs"
+required-features = ["dev-bins"]
+
+[[bin]]
+name = "tui_bench"
+path = "src/bin/tui_bench.rs"
+required-features = ["dev-bins"]
+
+[dependencies]
+# Memory allocator (reduces fragmentation for long-running server)
+tikv-jemallocator = { version = "0.6", features = ["unprefixed_malloc_on_supported_platforms"], optional = true }
+tikv-jemalloc-ctl = { version = "0.6", optional = true }
+tikv-jemalloc-sys = { version = "0.6", optional = true }
+
+# Async runtime
+tokio = { version = "1", features = ["fs", "io-std", "io-util", "macros", "net", "process", "rt-multi-thread", "signal", "sync", "time"] }
+futures = "0.3"
+async-trait = "0.1"
+
+# HTTP client
+reqwest = { version = "0.12", features = ["json", "stream", "blocking"] }
+tokio-tungstenite = { version = "0.24", default-features = false, features = ["connect", "rustls-tls-native-roots"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+toml = "0.8"
+
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# File operations
+glob = "0.3"
+ignore = "0.4"           # gitignore-aware file walking
+walkdir = "2"
+similar = "2"            # diffing for edits
+
+# Utilities
+dirs = "5"               # home directory
+anyhow = "1"
+thiserror = "1"
+libc = "0.2"             # Unix system calls (flock)
+chrono = { version = "0.4", features = ["serde"] }
+regex = "1"
+urlencoding = "2"        # URL encoding for web search
+uuid = { version = "1", features = ["v4", "v5"] }
+proctitle = "0.1"
+
+# Embeddings (local inference) - behind feature flag (163 crates, slow to compile)
+gcode-embedding = { path = "crates/gcode-embedding", optional = true }
+gcode-gateway-types = { path = "crates/gcode-gateway-types" }
+gcode-import-core = { path = "crates/gcode-import-core" }
+
+# OAuth
+base64 = "0.22"
+sha2 = "0.10"
+rand = "0.9.3"
+hex = "0.4"
+url = "2"
+open = "5"               # Open URLs in browser
+gcode-auth-types = { path = "crates/gcode-auth-types" }
+gcode-azure-auth = { path = "crates/gcode-azure-auth" }
+gcode-agent-runtime = { path = "crates/gcode-agent-runtime" }
+gcode-ambient-types = { path = "crates/gcode-ambient-types" }
+gcode-notify-email = { path = "crates/gcode-notify-email" }
+gcode-provider-metadata = { path = "crates/gcode-provider-metadata" }
+gcode-provider-core = { path = "crates/gcode-provider-core" }
+gcode-provider-openai = { path = "crates/gcode-provider-openai" }
+gcode-provider-openrouter = { path = "crates/gcode-provider-openrouter" }
+gcode-provider-gemini = { path = "crates/gcode-provider-gemini" }
+gcode-tui-markdown = { path = "crates/gcode-tui-markdown" }
+gcode-tui-messages = { path = "crates/gcode-tui-messages" }
+gcode-tui-core = { path = "crates/gcode-tui-core" }
+gcode-tui-mermaid = { path = "crates/gcode-tui-mermaid" }
+gcode-tui-account-picker = { path = "crates/gcode-tui-account-picker" }
+gcode-tui-render = { path = "crates/gcode-tui-render" }
+gcode-tui-session-picker = { path = "crates/gcode-tui-session-picker" }
+gcode-tui-style = { path = "crates/gcode-tui-style" }
+gcode-tui-tool-display = { path = "crates/gcode-tui-tool-display" }
+gcode-tui-usage-overlay = { path = "crates/gcode-tui-usage-overlay" }
+gcode-update-core = { path = "crates/gcode-update-core" }
+gcode-terminal-launch = { path = "crates/gcode-terminal-launch" }
+gcode-tui-workspace = { path = "crates/gcode-tui-workspace" }
+gcode-usage-types = { path = "crates/gcode-usage-types" }
+
+# Streaming
+tokio-stream = "0.1"
+bytes = "1"
+
+# TUI
+ratatui = "0.30"
+crossterm = { version = "0.29", features = ["event-stream"] }
+arboard = "3"              # Clipboard support
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }  # Only PNG/JPEG (skip avif/rav1e, exr, gif, tiff, etc)
+
+# Markdown & syntax highlighting
+unicode-width = "0.2"   # Unicode character display width
+
+# PDF parsing (behind feature flag)
+gcode-pdf = { path = "crates/gcode-pdf", optional = true }
+gcode-background-types = { path = "crates/gcode-background-types" }
+gcode-batch-types = { path = "crates/gcode-batch-types" }
+gcode-build-support = { path = "crates/gcode-build-support" }
+gcode-compaction-core = { path = "crates/gcode-compaction-core" }
+gcode-config-types = { path = "crates/gcode-config-types" }
+gcode-core = { path = "crates/gcode-core" }
+gcode-memory-types = { path = "crates/gcode-memory-types" }
+gcode-message-types = { path = "crates/gcode-message-types" }
+gcode-overnight-core = { path = "crates/gcode-overnight-core" }
+gcode-plan = { path = "crates/gcode-plan" }
+gcode-swarm-core = { path = "crates/gcode-swarm-core" }
+gcode-protocol = { path = "crates/gcode-protocol" }
+gcode-selfdev-types = { path = "crates/gcode-selfdev-types" }
+gcode-session-types = { path = "crates/gcode-session-types" }
+gcode-storage = { path = "crates/gcode-storage" }
+gcode-task-types = { path = "crates/gcode-task-types" }
+gcode-tool-core = { path = "crates/gcode-tool-core" }
+gcode-tool-types = { path = "crates/gcode-tool-types" }
+gcode-side-panel-types = { path = "crates/gcode-side-panel-types" }
+
+# Archive extraction (for auto-update)
+flate2 = "1"
+tar = "0.4"
+tempfile = "3"
+agentgrep = { git = "https://github.com/1jehuang/agentgrep.git", tag = "v0.1.2" }
+qrcode = { version = "0.14.1", default-features = false }
+
+[features]
+# Keep the heavyweight local ONNX/tokenizer embedding stack opt-in. It remains
+# available via `--features embeddings` or `GCODE_DEV_FEATURE_PROFILE=full`, but
+# ordinary check/build loops should not compile the tract/tokenizers subtree.
+default = ["pdf"]
+dev-bins = []
+jemalloc = [
+    "dep:tikv-jemallocator",
+    "dep:tikv-jemalloc-ctl",
+    "dep:tikv-jemalloc-sys",
+    "tikv-jemallocator/stats",
+    "tikv-jemalloc-ctl/stats",
+]
+jemalloc-prof = [
+    "jemalloc",
+    "tikv-jemallocator/profiling",
+    "tikv-jemalloc-ctl/profiling",
+]
+embeddings = ["dep:gcode-embedding"]
+pdf = ["dep:gcode-pdf"]
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_System_Threading"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+global-hotkey = "0.7"
+
+[profile.release]
+opt-level = 1
+debug = 0
+codegen-units = 256
+incremental = true
+
+[profile.selfdev]
+inherits = "release"
+opt-level = 0
+
+# Full LTO release for stable/distribution builds
+[profile.release-lto]
+inherits = "release"
+lto = "thin"
+codegen-units = 16
+incremental = false
+
+[profile.dev]
+debug = 0
+incremental = true
+
+[profile.dev.package."*"]
+opt-level = 0
+
+[profile.test]
+debug = 0
+incremental = true
+codegen-units = 256
+
+[dev-dependencies]
+async-stream = "0.3"
+
+[build-dependencies]

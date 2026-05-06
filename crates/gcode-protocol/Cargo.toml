@@ -1,0 +1,21 @@
+[package]
+name = "gcode-protocol"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+gcode-batch-types = { path = "../gcode-batch-types" }
+gcode-config-types = { path = "../gcode-config-types" }
+gcode-message-types = { path = "../gcode-message-types" }
+gcode-plan = { path = "../gcode-plan" }
+gcode-provider-core = { path = "../gcode-provider-core" }
+gcode-selfdev-types = { path = "../gcode-selfdev-types" }
+gcode-session-types = { path = "../gcode-session-types" }
+gcode-side-panel-types = { path = "../gcode-side-panel-types" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+anyhow = "1"
+rand = "0.9"

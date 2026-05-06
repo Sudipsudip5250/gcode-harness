@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Jcode Desktop
+GenericName=AI Development Workspace
+Comment=Jcode fullscreen desktop workspace prototype
+Exec=gcode-desktop
+Icon=gcode
+Terminal=false
+Categories=Development;IDE;
+StartupNotify=true
+Keywords=Jcode;AI;Agent;Development;Workspace;

@@ -1,0 +1,17 @@
+[package]
+name = "gcode-tool-core"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "gcode_tool_core"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1"
+async-trait = "0.1"
+gcode-agent-runtime = { path = "../gcode-agent-runtime" }
+gcode-message-types = { path = "../gcode-message-types" }
+gcode-tool-types = { path = "../gcode-tool-types" }
+serde_json = "1"
+tokio = { version = "1", features = ["sync"] }
