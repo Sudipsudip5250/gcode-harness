@@ -1,5 +1,9 @@
 {
-  "total": 0,
-  "tracked_files": {},
+  "total": 6,
+  "tracked_files": {
+    "crates/gcode-protocol/src/lib.rs": 1,
+    "src/auth/oauth.rs": 3,
+    "src/cli/commands/provider_setup.rs": 2
+  },
   "version": 1
 }

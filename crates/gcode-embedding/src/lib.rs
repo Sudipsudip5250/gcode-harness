@@ -105,7 +105,7 @@ impl Embedder {
         }
 
         let tokenizer = Tokenizer::from_file(&tokenizer_path)
-            .map_err(|e| anyhow::anyhow!("Failed to load tokenizer: {}", e))?;
+            .map_err(|e| anyhow::anyhow!("Failed to load tokenizer: {e}"))?;
 
         let model = tract_onnx::onnx()
             .model_for_path(&model_path)
@@ -125,7 +125,7 @@ impl Embedder {
         let encoding = self
             .tokenizer
             .encode(text, true)
-            .map_err(|e| anyhow::anyhow!("Tokenization failed: {}", e))?;
+            .map_err(|e| anyhow::anyhow!("Tokenization failed: {e}"))?;
 
         let mut input_ids = vec![0i64; MAX_SEQ_LENGTH];
         let mut attention_mask = vec![0i64; MAX_SEQ_LENGTH];
@@ -186,7 +186,7 @@ impl Embedder {
 
             Ok(embedding)
         } else {
-            anyhow::bail!("Unexpected output shape: {:?}", shape);
+            anyhow::bail!("Unexpected output shape: {shape:?}");
         }
     }
 
@@ -267,7 +267,7 @@ fn download_model(model_dir: &Path) -> Result<()> {
             } else {
                 "unknown panic payload".to_string()
             };
-            anyhow::bail!("Embedding model download thread panicked: {}", panic_msg);
+            anyhow::bail!("Embedding model download thread panicked: {panic_msg}");
         }
     }
 }

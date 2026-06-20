@@ -21,7 +21,7 @@ pub fn render_rounded_box(
         .min(max_width.saturating_sub(4));
 
     let truncated_title = truncate_line_with_ellipsis_to_width(
-        &Line::from(Span::raw(format!(" {} ", title))),
+        &Line::from(Span::raw(format!(" {title} "))),
         max_width.saturating_sub(2).max(1),
     );
     let title_text = line_plain_text(&truncated_title);
@@ -39,7 +39,7 @@ pub fn render_rounded_box(
 
     let mut lines: Vec<Line<'static>> = Vec::new();
     lines.push(Line::from(Span::styled(
-        format!("╭{}{}{}╮", left_border, title_text, right_border),
+        format!("╭{left_border}{title_text}{right_border}╮"),
         border_style,
     )));
 
@@ -58,7 +58,7 @@ pub fn render_rounded_box(
 
     let bottom_border = "─".repeat(box_width.saturating_sub(2));
     lines.push(Line::from(Span::styled(
-        format!("╰{}╯", bottom_border),
+        format!("╰{bottom_border}╯"),
         border_style,
     )));
 

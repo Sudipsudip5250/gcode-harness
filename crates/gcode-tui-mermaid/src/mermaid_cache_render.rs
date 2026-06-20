@@ -87,7 +87,7 @@ impl MermaidCache {
     pub(super) fn cache_path(&self, hash: u64, target_width: u32) -> PathBuf {
         // Include target width in filename for size-specific caching
         self.cache_dir
-            .join(format!("{:016x}_w{}.png", hash, target_width))
+            .join(format!("{hash:016x}_w{target_width}.png"))
     }
 
     pub(super) fn discover_on_disk(
@@ -268,8 +268,7 @@ fn deferred_render_sender() -> &'static mpsc::Sender<DeferredRenderTask> {
             .spawn(move || deferred_render_worker(rx))
         {
             crate::log_warn(&format!(
-                "Failed to spawn mermaid deferred worker, falling back to synchronous rendering: {}",
-                err
+                "Failed to spawn mermaid deferred worker, falling back to synchronous rendering: {err}"
             ));
         }
         tx
@@ -328,8 +327,7 @@ pub fn render_mermaid_deferred_with_registration(
 
     if node_count > MAX_NODES || edge_count > MAX_EDGES {
         return Some(RenderResult::Error(format!(
-            "Diagram too complex ({} nodes, {} edges). Max: {} nodes, {} edges.",
-            node_count, edge_count, MAX_NODES, MAX_EDGES
+            "Diagram too complex ({node_count} nodes, {edge_count} edges). Max: {MAX_NODES} nodes, {MAX_EDGES} edges."
         )));
     }
 
@@ -455,8 +453,7 @@ fn render_mermaid_sized_internal(
     // Check complexity limits
     if node_count > MAX_NODES || edge_count > MAX_EDGES {
         let msg = format!(
-            "Diagram too complex ({} nodes, {} edges). Max: {} nodes, {} edges.",
-            node_count, edge_count, MAX_NODES, MAX_EDGES
+            "Diagram too complex ({node_count} nodes, {edge_count} edges). Max: {MAX_NODES} nodes, {MAX_EDGES} edges."
         );
         if let Ok(mut state) = MERMAID_DEBUG.lock() {
             state.stats.render_errors += 1;
@@ -480,7 +477,7 @@ fn render_mermaid_sized_internal(
     if let Some(cached) = get_cached_diagram(hash, Some(target_width_u32)) {
         if let Ok(mut state) = MERMAID_DEBUG.lock() {
             state.stats.cache_hits += 1;
-            state.stats.last_hash = Some(format!("{:016x}", hash));
+            state.stats.last_hash = Some(format!("{hash:016x}"));
         }
         if register_active {
             // Register as active diagram (for pinned widget display)
@@ -496,7 +493,7 @@ fn render_mermaid_sized_internal(
 
     if let Ok(mut state) = MERMAID_DEBUG.lock() {
         state.stats.cache_misses += 1;
-        state.stats.last_hash = Some(format!("{:016x}", hash));
+        state.stats.last_hash = Some(format!("{hash:016x}"));
     }
 
     // Get cache path
@@ -520,7 +517,7 @@ fn render_mermaid_sized_internal(
         }
         if let Ok(mut state) = MERMAID_DEBUG.lock() {
             state.stats.cache_hits += 1;
-            state.stats.last_hash = Some(format!("{:016x}", hash));
+            state.stats.last_hash = Some(format!("{hash:016x}"));
         }
         if register_active {
             register_active_diagram(hash, cached.width, cached.height, None);
@@ -545,7 +542,7 @@ fn render_mermaid_sized_internal(
     let render_result = panic::catch_unwind(move || -> Result<RenderStageBreakdown, String> {
         let parse_start = Instant::now();
         // Parse mermaid
-        let parsed = parse_mermaid(&content_owned).map_err(|e| format!("Parse error: {}", e))?;
+        let parsed = parse_mermaid(&content_owned).map_err(|e| format!("Parse error: {e}"))?;
         let parse_ms = parse_start.elapsed().as_secs_f32() * 1000.0;
 
         // Configure theme for terminal (dark background friendly)
@@ -582,12 +579,12 @@ fn render_mermaid_sized_internal(
         // Ensure parent directory exists
         if let Some(parent) = png_path_clone.parent() {
             std::fs::create_dir_all(parent)
-                .map_err(|e| format!("Failed to create cache directory: {}", e))?;
+                .map_err(|e| format!("Failed to create cache directory: {e}"))?;
         }
 
         let png_start = Instant::now();
         write_output_png_cached_fonts(&svg, &png_path_clone, &render_config, &theme)
-            .map_err(|e| format!("Render error: {}", e))?;
+            .map_err(|e| format!("Render error: {e}"))?;
         let png_ms = png_start.elapsed().as_secs_f32() * 1000.0;
 
         Ok(RenderStageBreakdown {
@@ -637,14 +634,14 @@ fn render_mermaid_sized_internal(
                 "unknown panic in mermaid renderer".to_string()
             };
             if let Ok(mut errors) = RENDER_ERRORS.lock() {
-                errors.insert(hash, format!("Renderer panic: {}", msg));
+                errors.insert(hash, format!("Renderer panic: {msg}"));
             }
             if let Ok(mut state) = MERMAID_DEBUG.lock() {
                 state.stats.render_errors += 1;
                 state.stats.last_render_ms = Some(render_ms);
-                state.stats.last_error = Some(format!("Renderer panic: {}", msg));
+                state.stats.last_error = Some(format!("Renderer panic: {msg}"));
             }
-            return RenderResult::Error(format!("Renderer panic: {}", msg));
+            return RenderResult::Error(format!("Renderer panic: {msg}"));
         }
     }
 

@@ -30,10 +30,7 @@ pub fn openai_encrypted_content_is_sendable(encrypted_content: &str) -> bool {
 
 pub fn openai_encrypted_content_fallback_summary(encrypted_content_len: usize) -> String {
     format!(
-        "OpenAI native compaction state was discarded because its encrypted payload was {} chars, above Jcode's safe replay limit of {} chars (provider hard limit: {} chars). Earlier compacted details may be unavailable; use the recent visible messages and session search/tools if exact prior details are needed.",
-        encrypted_content_len,
-        OPENAI_ENCRYPTED_CONTENT_SAFE_MAX_CHARS,
-        OPENAI_ENCRYPTED_CONTENT_PROVIDER_MAX_CHARS,
+        "OpenAI native compaction state was discarded because its encrypted payload was {encrypted_content_len} chars, above Jcode's safe replay limit of {OPENAI_ENCRYPTED_CONTENT_SAFE_MAX_CHARS} chars (provider hard limit: {OPENAI_ENCRYPTED_CONTENT_PROVIDER_MAX_CHARS} chars). Earlier compacted details may be unavailable; use the recent visible messages and session search/tools if exact prior details are needed.",
     )
 }
 
@@ -105,7 +102,7 @@ pub fn build_responses_input_with_logger(
     messages: &[ChatMessage],
     mut logger: impl FnMut(OpenAiRequestLogLevel, &str),
 ) -> Vec<Value> {
-    let missing_output = format!("[Error] {}", TOOL_OUTPUT_MISSING_TEXT);
+    let missing_output = format!("[Error] {TOOL_OUTPUT_MISSING_TEXT}");
 
     let mut tool_result_last_pos: HashMap<String, usize> = HashMap::new();
     for (idx, msg) in messages.iter().enumerate() {
@@ -193,7 +190,7 @@ pub fn build_responses_input_with_logger(
                                 continue;
                             }
                             let output = if is_error == &Some(true) {
-                                format!("[Error] {}", content)
+                                format!("[Error] {content}")
                             } else {
                                 content.clone()
                             };
@@ -301,10 +298,7 @@ pub fn build_responses_input_with_logger(
     if delayed_results > 0 {
         logger(
             OpenAiRequestLogLevel::Info,
-            &format!(
-                "[openai] Delayed {} tool output(s) to preserve call ordering",
-                delayed_results
-            ),
+            &format!("[openai] Delayed {delayed_results} tool output(s) to preserve call ordering"),
         );
     }
 
@@ -334,8 +328,7 @@ pub fn build_responses_input_with_logger(
         logger(
             OpenAiRequestLogLevel::Info,
             &format!(
-                "[openai] Injected {} synthetic tool output(s) to prevent API error",
-                injected_missing
+                "[openai] Injected {injected_missing} synthetic tool output(s) to prevent API error"
             ),
         );
     }
@@ -346,8 +339,7 @@ pub fn build_responses_input_with_logger(
         logger(
             OpenAiRequestLogLevel::Info,
             &format!(
-                "[openai] Rewrote {} pending orphaned tool output(s) as user messages (total={})",
-                rewritten_pending_orphans, total
+                "[openai] Rewrote {rewritten_pending_orphans} pending orphaned tool output(s) as user messages (total={total})"
             ),
         );
     }
@@ -355,8 +347,7 @@ pub fn build_responses_input_with_logger(
         logger(
             OpenAiRequestLogLevel::Info,
             &format!(
-                "[openai] Filtered {} orphaned tool result(s) to prevent API error",
-                skipped_results
+                "[openai] Filtered {skipped_results} orphaned tool result(s) to prevent API error"
             ),
         );
     }
@@ -402,8 +393,7 @@ pub fn build_responses_input_with_logger(
         logger(
             OpenAiRequestLogLevel::Info,
             &format!(
-                "[openai] Safety-injected {} missing tool output(s) at request build",
-                extra_injected
+                "[openai] Safety-injected {extra_injected} missing tool output(s) at request build"
             ),
         );
     }
@@ -492,8 +482,7 @@ pub fn build_responses_input_with_logger(
         logger(
             OpenAiRequestLogLevel::Info,
             &format!(
-                "[openai] Inserted {} tool output(s) to enforce call ordering",
-                injected_ordered
+                "[openai] Inserted {injected_ordered} tool output(s) to enforce call ordering"
             ),
         );
     }
@@ -501,8 +490,7 @@ pub fn build_responses_input_with_logger(
         logger(
             OpenAiRequestLogLevel::Info,
             &format!(
-                "[openai] Dropped {} duplicate tool output(s) during re-ordering",
-                dropped_duplicate_outputs
+                "[openai] Dropped {dropped_duplicate_outputs} duplicate tool output(s) during re-ordering"
             ),
         );
     }
@@ -513,8 +501,7 @@ pub fn build_responses_input_with_logger(
         logger(
             OpenAiRequestLogLevel::Info,
             &format!(
-                "[openai] Rewrote {} orphaned tool output(s) as user messages (total={})",
-                rewritten_orphans, total
+                "[openai] Rewrote {rewritten_orphans} orphaned tool output(s) as user messages (total={total})"
             ),
         );
     }
@@ -522,8 +509,7 @@ pub fn build_responses_input_with_logger(
         logger(
             OpenAiRequestLogLevel::Info,
             &format!(
-                "[openai] Skipped {} empty orphaned tool output(s) during re-ordering",
-                skipped_empty_orphans
+                "[openai] Skipped {skipped_empty_orphans} empty orphaned tool output(s) during re-ordering"
             ),
         );
     }

@@ -49,10 +49,10 @@ fn truncate_smart(s: &str, max_len: usize) -> String {
         let before = &prefix[..pos];
         let pos_chars = before.chars().count();
         if pos_chars > target / 2 {
-            return format!("{}...", before);
+            return format!("{before}...");
         }
     }
-    format!("{}...", prefix)
+    format!("{prefix}...")
 }
 
 use gcode_memory_types::{EdgeKind, MemoryGraph};

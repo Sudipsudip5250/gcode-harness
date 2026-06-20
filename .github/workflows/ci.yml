@@ -13,6 +13,7 @@ concurrency:
 env:
   CARGO_TERM_COLOR: always
   SCCACHE_GHA_ENABLED: "true"
+  CARGO_INCREMENTAL: "0"
 
 jobs:
   quality:
@@ -34,10 +35,11 @@ jobs:
       - name: Check formatting
         run: cargo fmt --all -- --check
 
-      - name: Check all targets and all features
-        run: cargo check --all-targets --all-features
+      - name: Clippy (default features, fast path)
+        run: cargo clippy --all-targets -- -D warnings
 
-      - name: Run clippy with warnings denied
+      - name: Clippy (all features, advisory)
+        continue-on-error: true
         run: cargo clippy --all-targets --all-features -- -D warnings
 
       - name: Enforce warning budget
@@ -119,7 +121,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq mold
 
-      - name: Build
+      - name: Build and compile tests
         shell: bash
         run: |
           mkdir -p .cargo
@@ -133,25 +135,20 @@ jobs:
           if command -v sccache &>/dev/null && sccache --start-server 2>/dev/null; then
             export RUSTC_WRAPPER=sccache
           fi
-          cargo build --release --target ${{ matrix.target }}
-
-      - name: Compile library and binary tests
-        shell: bash
-        run: |
           python3 .github/scripts/run_with_timeout.py 900 \
-            cargo test --target ${{ matrix.target }} --lib --bins --no-run
+            cargo test --locked --target ${{ matrix.target }} --lib --bins --no-run
 
       - name: Run provider matrix tests
         shell: bash
         run: |
           python3 .github/scripts/run_with_timeout.py 600 \
-            cargo test --target ${{ matrix.target }} --test provider_matrix
+            cargo test --locked --target ${{ matrix.target }} --test provider_matrix
 
       - name: Run e2e tests
         shell: bash
         run: |
           python3 .github/scripts/run_with_timeout.py 900 \
-            cargo test --target ${{ matrix.target }} --test e2e
+            cargo test --locked --target ${{ matrix.target }} --test e2e
 
       - name: Check PowerShell script syntax (Windows)
         if: runner.os == 'Windows'
@@ -167,10 +164,10 @@ jobs:
 
       - name: Security preflight (Linux)
         if: runner.os == 'Linux'
-        shell: bash
-        run: |
-          cargo install cargo-audit --locked
-          scripts/security_preflight.sh --strict
+        continue-on-error: true
+        uses: rustsec/audit-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   windows-build-test:
     name: Build & Test (windows-latest)

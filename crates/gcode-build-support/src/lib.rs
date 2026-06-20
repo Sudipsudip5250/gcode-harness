@@ -203,7 +203,7 @@ pub fn rollback_pending_activation_for_session(session_id: &str) -> Result<Optio
 /// Install a binary at a specific immutable version path.
 pub fn install_binary_at_version(source: &std::path::Path, version: &str) -> Result<PathBuf> {
     if !source.exists() {
-        anyhow::bail!("Binary not found at {:?}", source);
+        anyhow::bail!("Binary not found at {source:?}");
     }
 
     let dest_dir = builds_dir()?.join("versions").join(version);
@@ -469,13 +469,11 @@ fn smoke_test_server_request(
         let bytes = stream.read_line(&mut line)?;
         if bytes == 0 {
             anyhow::bail!(
-                "server closed the smoke-test socket before sending {:?} {}",
-                expected_reply_kind,
-                expected_reply_id
+                "server closed the smoke-test socket before sending {expected_reply_kind:?} {expected_reply_id}"
             );
         }
         let value: serde_json::Value = serde_json::from_str(line.trim()).map_err(|err| {
-            anyhow::anyhow!("server smoke test returned invalid JSON line: {}", err)
+            anyhow::anyhow!("server smoke test returned invalid JSON line: {err}")
         })?;
         let reply_type = value.get("type").and_then(|t| t.as_str());
         let reply_id = value.get("id").and_then(|id| id.as_u64());
@@ -488,9 +486,7 @@ fn smoke_test_server_request(
         }
         if Instant::now() >= deadline {
             anyhow::bail!(
-                "timed out waiting for {:?} {} during server smoke test",
-                expected_reply_kind,
-                expected_reply_id
+                "timed out waiting for {expected_reply_kind:?} {expected_reply_id} during server smoke test"
             );
         }
     }
@@ -637,7 +633,7 @@ fn update_channel_symlink(channel: &str, version: &str) -> Result<PathBuf> {
     let link_path = channel_dir.join(binary_name());
     let target = version_binary_path(version)?;
     if !target.exists() {
-        anyhow::bail!("Version binary not found at {:?}", target);
+        anyhow::bail!("Version binary not found at {target:?}");
     }
 
     let temp = channel_dir.join(format!(
@@ -680,7 +676,7 @@ pub fn publish_local_current_build_for_source(
     let binary = find_dev_binary(repo_dir)
         .ok_or_else(|| anyhow::anyhow!("Binary not found in target/selfdev or target/release"))?;
     if !binary.exists() {
-        anyhow::bail!("Binary not found at {:?}", binary);
+        anyhow::bail!("Binary not found at {binary:?}");
     }
 
     validate_dev_binary_matches_source(repo_dir, &binary, source)?;
@@ -731,7 +727,7 @@ pub fn promote_version_to_shared_server(version: &str) -> Result<Option<String>>
 pub fn install_local_release(repo_dir: &std::path::Path) -> Result<PathBuf> {
     let source = release_binary_path(repo_dir);
     if !source.exists() {
-        anyhow::bail!("Binary not found at {:?}", source);
+        anyhow::bail!("Binary not found at {source:?}");
     }
 
     let version = repo_build_version(repo_dir)?;

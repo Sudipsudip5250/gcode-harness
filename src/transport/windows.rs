@@ -389,7 +389,7 @@ mod tests {
     #[test]
     fn pipe_name_is_stable_and_normalizes_case_and_separators() {
         let a = path_to_pipe_name(Path::new(r"C:\Temp\Jcode\server.sock"));
-        let b = path_to_pipe_name(Path::new("c:/temp/gcode/server.sock"));
+        let b = path_to_pipe_name(Path::new("c:/temp/jcode/server.sock"));
         assert_eq!(a, b, "pipe names should be normalized consistently");
         assert!(
             a.starts_with(r"\\.\pipe\server-"),

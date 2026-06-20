@@ -8,6 +8,7 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use std::time::Duration;
 
+#[allow(clippy::type_complexity)]
 static AMBIENT_INFO_CACHE: Mutex<
     Option<(std::time::Instant, bool, Option<AmbientWidgetData>, bool)>,
 > = Mutex::new(None);

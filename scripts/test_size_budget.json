@@ -1,7 +1,7 @@
 {
   "threshold_loc": 1200,
   "tracked_files": {
-    "crates/gcode-desktop/src/main_tests.rs": 1583,
+    "crates/gcode-desktop/src/main_tests.rs": 1687,
     "tests/e2e/test_support/mod.rs": 1325
   },
   "version": 1

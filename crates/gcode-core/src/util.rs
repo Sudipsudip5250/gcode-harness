@@ -44,14 +44,14 @@ pub fn format_number(n: usize) -> String {
 /// Format a token count in the compact style used by the TUI.
 pub fn format_approx_token_count(tokens: usize) -> String {
     match tokens {
-        0..=999 => format!("{} tok", tokens),
+        0..=999 => format!("{tokens} tok"),
         1_000..=9_999 => {
             let whole = tokens / 1_000;
             let tenth = (tokens % 1_000) / 100;
             if tenth == 0 {
-                format!("{}k tok", whole)
+                format!("{whole}k tok")
             } else {
-                format!("{}.{}k tok", whole, tenth)
+                format!("{whole}.{tenth}k tok")
             }
         }
         _ => format!("{}k tok", tokens / 1_000),
@@ -135,8 +135,7 @@ pub fn process_fd_diagnostic_snapshot() -> String {
             .unwrap_or_else(|| ("unknown".to_string(), "unknown".to_string()));
 
         format!(
-            "pid={} fds={} soft_limit={} hard_limit={} kinds={{socket:{}, pipe:{}, anon_inode:{}, char:{}, file:{}, dir:{}, other:{}}}",
-            pid, total, soft_limit, hard_limit, sockets, pipes, anon, chars, regs, dirs, other
+            "pid={pid} fds={total} soft_limit={soft_limit} hard_limit={hard_limit} kinds={{socket:{sockets}, pipe:{pipes}, anon_inode:{anon}, char:{chars}, file:{regs}, dir:{dirs}, other:{other}}}"
         )
     }
 

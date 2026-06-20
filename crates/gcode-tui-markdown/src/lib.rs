@@ -54,7 +54,7 @@ impl CopyTargetKind {
                     .as_deref()
                     .filter(|lang| !lang.is_empty())
                     .unwrap_or("code block");
-                format!("Copied {}", label)
+                format!("Copied {label}")
             }
             Self::Error => "Copied error".to_string(),
             Self::ToolOutput => "Copied output".to_string(),
@@ -1163,7 +1163,7 @@ fn count_unescaped_double_dollar(line: &str) -> usize {
 }
 
 fn math_inline_span(math: &str) -> Span<'static> {
-    Span::styled(format!("${}$", math), Style::default().fg(math_fg()))
+    Span::styled(format!("${math}$"), Style::default().fg(math_fg()))
 }
 
 fn math_display_lines(math: &str) -> Vec<Line<'static>> {

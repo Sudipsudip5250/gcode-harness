@@ -855,15 +855,15 @@ pub fn codex_title_candidate(text: &str) -> Option<String> {
 }
 
 pub fn imported_claude_code_session_id(session_id: &str) -> String {
-    format!("imported_cc_{}", session_id)
+    format!("imported_cc_{session_id}")
 }
 
 pub fn imported_codex_session_id(session_id: &str) -> String {
-    format!("imported_codex_{}", session_id)
+    format!("imported_codex_{session_id}")
 }
 
 pub fn imported_opencode_session_id(session_id: &str) -> String {
-    format!("imported_opencode_{}", session_id)
+    format!("imported_opencode_{session_id}")
 }
 
 pub fn imported_pi_session_id(session_path: &str) -> String {

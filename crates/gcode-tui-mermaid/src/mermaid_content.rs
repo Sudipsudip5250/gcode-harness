@@ -88,10 +88,7 @@ pub(super) fn image_widget_placeholder(hash: u64, height: u16) -> Vec<Line<'stat
 
     // First line contains the hash as a marker
     lines.push(Line::from(Span::styled(
-        format!(
-            "{}{:016x}{}",
-            MERMAID_MARKER_PREFIX, hash, MERMAID_MARKER_SUFFIX
-        ),
+        format!("{MERMAID_MARKER_PREFIX}{hash:016x}{MERMAID_MARKER_SUFFIX}"),
         invisible,
     )));
 
@@ -106,10 +103,7 @@ pub(super) fn image_widget_placeholder(hash: u64, height: u16) -> Vec<Line<'stat
 /// Create a markdown/text marker line that side-panel rendering recognizes as an
 /// inline image placeholder for an already-registered image hash.
 pub fn image_widget_placeholder_markdown(hash: u64) -> String {
-    format!(
-        "{}{:016x}{}\n",
-        MERMAID_MARKER_PREFIX, hash, MERMAID_MARKER_SUFFIX
-    )
+    format!("{MERMAID_MARKER_PREFIX}{hash:016x}{MERMAID_MARKER_SUFFIX}\n")
 }
 
 /// Check if a line is a mermaid image placeholder and extract the hash
@@ -139,7 +133,7 @@ pub fn write_video_export_marker(hash: u64, area: Rect, buf: &mut Buffer) {
     }
     let invisible = Style::default().fg(Color::Black).bg(Color::Black);
     // Use printable marker characters that won't break SVG XML
-    let marker = format!("JMERMAID:{:016x}:END", hash);
+    let marker = format!("JMERMAID:{hash:016x}:END");
     // Write marker on the first row
     let y = area.y;
     for (i, ch) in marker.chars().enumerate() {
@@ -166,7 +160,7 @@ fn image_placeholder_lines(width: u32, height: u32) -> Vec<Line<'static>> {
         Line::from(vec![
             Span::styled("│ ", dim),
             Span::styled(
-                format!("{}×{} px (image protocols not available)", width, height),
+                format!("{width}×{height} px (image protocols not available)"),
                 info,
             ),
         ]),
@@ -197,10 +191,7 @@ pub fn error_to_lines(error: &str) -> Vec<Line<'static>> {
         )),
         Line::from(vec![
             Span::styled("│ ", dim),
-            Span::styled(
-                format!("{:<width$}", error, width = content_width),
-                err_style,
-            ),
+            Span::styled(format!("{error:<content_width$}"), err_style),
             Span::styled("│", dim),
         ]),
         Line::from(Span::styled(

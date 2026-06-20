@@ -183,7 +183,7 @@ pub fn render_markdown_lazy(
                     && !url.is_empty()
                 {
                     current_spans.push(Span::styled(
-                        format!(" ({})", url),
+                        format!(" ({url})"),
                         Style::default().fg(md_dim_color()),
                     ));
                 }
@@ -201,9 +201,9 @@ pub fn render_markdown_lazy(
                     image_alt.trim().to_string()
                 };
                 let label = if let Some(url) = image_url.take() {
-                    format!("[image: {}] ({})", alt, url)
+                    format!("[image: {alt}] ({url})")
                 } else {
-                    format!("[image: {}]", alt)
+                    format!("[image: {alt}]")
                 };
                 if in_table {
                     current_cell.push_str(&label);
@@ -230,7 +230,7 @@ pub fn render_markdown_lazy(
                 in_footnote_definition = true;
                 ensure_blockquote_prefix(&mut current_spans, blockquote_depth);
                 current_spans.push(Span::styled(
-                    format!("[^{}]: ", label),
+                    format!("[^{label}]: "),
                     Style::default().fg(md_dim_color()),
                 ));
             }
@@ -410,7 +410,7 @@ pub fn render_markdown_lazy(
                     // Add header
                     lines.push(
                         Line::from(Span::styled(
-                            format!("┌─ {} ", lang_label),
+                            format!("┌─ {lang_label} "),
                             Style::default().fg(md_dim_color()),
                         ))
                         .left_aligned(),
@@ -662,13 +662,13 @@ pub fn render_markdown_lazy(
 
             Event::FootnoteReference(label) => {
                 if in_image {
-                    image_alt.push_str(&format!("[^{}]", label));
+                    image_alt.push_str(&format!("[^{label}]"));
                 } else if in_table {
-                    current_cell.push_str(&format!("[^{}]", label));
+                    current_cell.push_str(&format!("[^{label}]"));
                 } else {
                     ensure_blockquote_prefix(&mut current_spans, blockquote_depth);
                     current_spans.push(Span::styled(
-                        format!("[^{}]", label),
+                        format!("[^{label}]"),
                         Style::default().fg(md_dim_color()),
                     ));
                 }
@@ -728,9 +728,9 @@ pub fn render_markdown_lazy(
                         state.max_marker_digits =
                             state.max_marker_digits.max(idx.to_string().len());
                         state.item_line_starts.push(item_line_start);
-                        format!("{}{}. ", indent, idx)
+                        format!("{indent}{idx}. ")
                     } else {
-                        format!("{}• ", indent)
+                        format!("{indent}• ")
                     }
                 } else {
                     "• ".to_string()

@@ -105,8 +105,7 @@ pub fn anthropic_oauth_pricing(model: &str, subscription: Option<&str>) -> Route
             usd_to_micros(20.0),
             None,
             Some(format!(
-                "Claude OAuth plan '{}'; assumed Pro-like pricing",
-                other
+                "Claude OAuth plan '{other}'; assumed Pro-like pricing"
             )),
         ),
         None => RouteCheapnessEstimate::subscription(

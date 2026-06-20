@@ -412,7 +412,7 @@ impl std::fmt::Display for MemoryCategory {
             MemoryCategory::Preference => write!(f, "preference"),
             MemoryCategory::Entity => write!(f, "entity"),
             MemoryCategory::Correction => write!(f, "correction"),
-            MemoryCategory::Custom(s) => write!(f, "{}", s),
+            MemoryCategory::Custom(s) => write!(f, "{s}"),
         }
     }
 }

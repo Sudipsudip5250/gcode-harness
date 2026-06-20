@@ -413,6 +413,6 @@ pub fn progress_line(label: &str, progress: f32, width: usize) -> Line<'static> 
         Span::styled(label.to_string(), Style::default().dim()),
         Span::raw(" "),
         Span::styled(bar, Style::default().fg(rgb(129, 199, 132))),
-        Span::styled(format!(" {}%", pct), Style::default().dim()),
+        Span::styled(format!(" {pct}%"), Style::default().dim()),
     ])
 }

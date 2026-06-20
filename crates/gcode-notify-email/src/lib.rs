@@ -42,7 +42,7 @@ pub async fn send_email(request: SendEmailRequest<'_>) -> Result<()> {
         .header(ContentType::TEXT_HTML);
 
     if let Some(cid) = request.cycle_id {
-        let msg_id = format!("<ambient-{}@gcode>", cid);
+        let msg_id = format!("<ambient-{cid}@gcode>");
         builder = builder.message_id(Some(msg_id));
     }
 
@@ -67,7 +67,7 @@ pub fn poll_imap_once(host: &str, port: u16, user: &str, pass: &str) -> Result<V
     let client = imap::ClientBuilder::new(host, port).connect()?;
     let mut session = client
         .login(user, pass)
-        .map_err(|(e, _)| anyhow::anyhow!("IMAP login failed: {}", e))?;
+        .map_err(|(e, _)| anyhow::anyhow!("IMAP login failed: {e}"))?;
 
     session.select("INBOX")?;
 
@@ -187,21 +187,15 @@ pub fn build_permission_email_html(
     let now = chrono::Utc::now();
     let timestamp = now.format("%Y-%m-%d %H:%M:%S UTC").to_string();
 
-    let approve_subj_raw = format!("[gcode-perm:{}] Approved", request_id);
-    let deny_subj_raw = format!("[gcode-perm:{}] Denied", request_id);
+    let approve_subj_raw = format!("[gcode-perm:{request_id}] Approved");
+    let deny_subj_raw = format!("[gcode-perm:{request_id}] Denied");
     let approve_subject = urlencoding::encode(&approve_subj_raw);
     let deny_subject = urlencoding::encode(&deny_subj_raw);
     let approve_body = urlencoding::encode("Approved");
     let deny_body = urlencoding::encode("Denied");
 
-    let approve_href = format!(
-        "mailto:{}?subject={}&body={}",
-        reply_to, approve_subject, approve_body
-    );
-    let deny_href = format!(
-        "mailto:{}?subject={}&body={}",
-        reply_to, deny_subject, deny_body
-    );
+    let approve_href = format!("mailto:{reply_to}?subject={approve_subject}&body={approve_body}");
+    let deny_href = format!("mailto:{reply_to}?subject={deny_subject}&body={deny_body}");
 
     format!(
         r#"<!DOCTYPE html>

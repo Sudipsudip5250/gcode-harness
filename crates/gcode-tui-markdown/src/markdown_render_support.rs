@@ -309,7 +309,7 @@ pub(super) fn placeholder_code_block(code: &str, lang: Option<&str>) -> Vec<Line
 
     // Return placeholder lines that will be replaced when visible
     vec![Line::from(Span::styled(
-        format!("  [{} block: {} lines]", lang_str, line_count),
+        format!("  [{lang_str} block: {line_count} lines]"),
         Style::default().fg(md_dim_color()).italic(),
     ))]
 }

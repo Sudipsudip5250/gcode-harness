@@ -102,13 +102,13 @@ impl EndpointInfo {
             parts.push(format!("${:.2}/M", p * 1e6));
         }
         if let Some(uptime) = self.uptime_last_30m {
-            parts.push(format!("{:.0}%", uptime));
+            parts.push(format!("{uptime:.0}%"));
         }
         if let Some(ref tps) = self.throughput_last_30m
             && let Some(t) = Self::extract_p50(tps)
             && t > 0.0
         {
-            parts.push(format!("{:.0}tps", t));
+            parts.push(format!("{t:.0}tps"));
         }
         if let Some(ref cache_read) = self.pricing.input_cache_read
             && let Ok(cr) = cache_read.parse::<f64>()
@@ -291,7 +291,7 @@ fn cache_path() -> PathBuf {
         .unwrap_or_else(|| PathBuf::from("."))
         .join(".gcode")
         .join("cache")
-        .join(format!("{}_models.json", namespace))
+        .join(format!("{namespace}_models.json"))
 }
 
 fn disk_cache_modified_at(path: &PathBuf) -> Option<SystemTime> {
@@ -375,11 +375,11 @@ pub fn model_created_timestamp_from_index(
 fn openrouter_id_candidates(model: &str) -> Vec<String> {
     let mut candidates = Vec::new();
     if model.starts_with("claude-") || model.starts_with("claude_") {
-        candidates.push(format!("anthropic/{}", model));
+        candidates.push(format!("anthropic/{model}"));
         if let Some(pos) = model.rfind('-') {
             let mut dotted = model.to_string();
             dotted.replace_range(pos..pos + 1, ".");
-            candidates.push(format!("anthropic/{}", dotted));
+            candidates.push(format!("anthropic/{dotted}"));
         }
     } else if model.starts_with("gpt-")
         || model.starts_with("codex-")
@@ -387,7 +387,7 @@ fn openrouter_id_candidates(model: &str) -> Vec<String> {
         || model.starts_with("o3")
         || model.starts_with("o4")
     {
-        candidates.push(format!("openai/{}", model));
+        candidates.push(format!("openai/{model}"));
     }
     candidates
 }
@@ -442,7 +442,7 @@ fn endpoints_cache_path(model: &str) -> PathBuf {
         .unwrap_or_else(|| PathBuf::from("."))
         .join(".gcode")
         .join("cache")
-        .join(format!("{}_endpoints_{}.json", namespace, safe_name))
+        .join(format!("{namespace}_endpoints_{safe_name}.json"))
 }
 
 pub fn load_endpoints_disk_cache_public(model: &str) -> Option<(Vec<EndpointInfo>, u64)> {

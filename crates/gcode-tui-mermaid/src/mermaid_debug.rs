@@ -70,7 +70,7 @@ pub fn debug_stats() -> MermaidDebugStats {
         out.deferred_pending = pending.len();
     }
     out.deferred_epoch = deferred_render_epoch();
-    out.protocol = protocol_type().map(|p| format!("{:?}", p));
+    out.protocol = protocol_type().map(|p| format!("{p:?}"));
     out
 }
 
@@ -90,7 +90,7 @@ pub fn debug_cache() -> Vec<MermaidCacheEntry> {
             .entries
             .iter()
             .map(|(hash, diagram)| MermaidCacheEntry {
-                hash: format!("{:016x}", hash),
+                hash: format!("{hash:016x}"),
                 path: diagram.path.to_string_lossy().to_string(),
                 width: diagram.width,
                 height: diagram.height,
@@ -181,8 +181,7 @@ pub fn debug_memory_benchmark(iterations: usize) -> MermaidMemoryBenchmark {
 
     for idx in 0..iterations {
         let content = format!(
-            "flowchart TD\n    A{i}[Start {i}] --> B{i}{{Check}}\n    B{i} -->|yes| C{i}[Fast path]\n    B{i} -->|no| D{i}[Slow path]\n    C{i} --> E{i}[Done]\n    D{i} --> E{i}",
-            i = idx
+            "flowchart TD\n    A{idx}[Start {idx}] --> B{idx}{{Check}}\n    B{idx} -->|yes| C{idx}[Fast path]\n    B{idx} -->|no| D{idx}[Slow path]\n    C{idx} --> E{idx}[Done]\n    D{idx} --> E{idx}"
         );
 
         if matches!(
@@ -218,7 +217,7 @@ pub fn debug_memory_benchmark(iterations: usize) -> MermaidMemoryBenchmark {
 
 pub fn debug_flicker_benchmark(steps: usize) -> MermaidFlickerBenchmark {
     init_picker();
-    let protocol = protocol_type().map(|p| format!("{:?}", p));
+    let protocol = protocol_type().map(|p| format!("{p:?}"));
     let protocol_supported = protocol.is_some();
     let steps = steps.clamp(4, 256);
 
@@ -374,6 +373,7 @@ fn diff_opt_u64(after: Option<u64>, before: Option<u64>) -> Option<i64> {
 }
 
 #[cfg(test)]
+#[allow(dead_code)]
 fn parse_proc_status_kib_line(line: &str, key: &str) -> Option<u64> {
     let rest = line.strip_prefix(key)?.trim();
     let value_kib = rest.split_whitespace().next()?.parse::<u64>().ok()?;
@@ -381,6 +381,7 @@ fn parse_proc_status_kib_line(line: &str, key: &str) -> Option<u64> {
 }
 
 #[cfg(test)]
+#[allow(dead_code)]
 pub(super) fn parse_proc_status_value_bytes(status: &str, key: &str) -> Option<u64> {
     status
         .lines()

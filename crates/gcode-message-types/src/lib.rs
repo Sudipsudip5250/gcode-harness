@@ -210,7 +210,7 @@ impl Message {
 
     pub fn format_duration(duration_ms: u64) -> String {
         match duration_ms {
-            0..=999 => format!("{}ms", duration_ms),
+            0..=999 => format!("{duration_ms}ms"),
             1_000..=9_999 => format!("{:.1}s", duration_ms as f64 / 1000.0),
             10_000..=59_999 => format!("{}s", duration_ms / 1000),
             _ => {
@@ -218,9 +218,9 @@ impl Message {
                 let minutes = total_seconds / 60;
                 let seconds = total_seconds % 60;
                 if seconds == 0 {
-                    format!("{}m", minutes)
+                    format!("{minutes}m")
                 } else {
-                    format!("{}m {}s", minutes, seconds)
+                    format!("{minutes}m {seconds}s")
                 }
             }
         }
@@ -278,11 +278,11 @@ impl Message {
                 for block in &mut msg.content {
                     match block {
                         ContentBlock::Text { text, .. } if !tagged => {
-                            *text = format!("{} {}", text_tag, text);
+                            *text = format!("{text_tag} {text}");
                             tagged = true;
                         }
                         ContentBlock::ToolResult { content, .. } if !tagged => {
-                            *content = format!("{} {}", tool_result_tag, content);
+                            *content = format!("{tool_result_tag} {content}");
                             tagged = true;
                         }
                         _ => {}
@@ -316,7 +316,7 @@ pub fn extend_stable_hash(acc: u64, next: u64) -> u64 {
 pub fn stable_message_hash(message: &Message) -> u64 {
     match serde_json::to_vec(message) {
         Ok(bytes) => stable_hash_bytes(&bytes),
-        Err(_) => stable_hash_bytes(format!("{:?}", message).as_bytes()),
+        Err(_) => stable_hash_bytes(format!("{message:?}").as_bytes()),
     }
 }
 
@@ -393,8 +393,7 @@ fn dynamic_system_context_message(system_dynamic: &str) -> Option<Message> {
         return None;
     }
     Some(Message::user(&format!(
-        "<system-reminder>\n{}\n</system-reminder>",
-        trimmed
+        "<system-reminder>\n{trimmed}\n</system-reminder>"
     )))
 }
 
@@ -537,7 +536,7 @@ impl std::fmt::Display for ConnectionPhase {
             ConnectionPhase::WaitingForResponse => write!(f, "waiting for response"),
             ConnectionPhase::Streaming => write!(f, "streaming"),
             ConnectionPhase::Retrying { attempt, max } => {
-                write!(f, "retrying ({}/{})", attempt, max)
+                write!(f, "retrying ({attempt}/{max})")
             }
         }
     }
@@ -623,7 +622,7 @@ mod tests {
     fn text_of(message: &Message) -> &str {
         match message.content.first() {
             Some(ContentBlock::Text { text, .. }) => text,
-            other => panic!("expected text block, got {:?}", other),
+            other => panic!("expected text block, got {other:?}"),
         }
     }
 

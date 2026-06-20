@@ -33,8 +33,7 @@ impl SelfDevBuildTarget {
             "desktop" | "gcode-desktop" => Ok(Self::Desktop),
             "all" | "both" => Ok(Self::All),
             other => anyhow::bail!(
-                "invalid selfdev build target `{}`; expected auto, tui, desktop, or all",
-                other
+                "invalid selfdev build target `{other}`; expected auto, tui, desktop, or all"
             ),
         }
     }

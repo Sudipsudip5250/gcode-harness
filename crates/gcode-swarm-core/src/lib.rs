@@ -337,10 +337,10 @@ pub fn normalize_completion_report(report: Option<String>) -> Option<String> {
 
 fn completion_status_intro(name: &str, status: &str) -> String {
     match status {
-        "ready" => format!("Agent {} finished their work and is ready for more.", name),
-        "failed" => format!("Agent {} finished with status failed.", name),
-        "stopped" => format!("Agent {} stopped.", name),
-        _ => format!("Agent {} completed their work.", name),
+        "ready" => format!("Agent {name} finished their work and is ready for more."),
+        "failed" => format!("Agent {name} finished with status failed."),
+        "stopped" => format!("Agent {name} stopped."),
+        _ => format!("Agent {name} completed their work."),
     }
 }
 

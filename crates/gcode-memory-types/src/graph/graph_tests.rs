@@ -290,7 +290,7 @@ fn test_graph_serialization_roundtrip() {
 
     // Serialize
     let json = serde_json::to_string_pretty(&graph).expect("serialize");
-    eprintln!("Serialized graph:\n{}", json);
+    eprintln!("Serialized graph:\n{json}");
 
     // Check edges appear in JSON
     assert!(json.contains("\"edges\""), "JSON should contain edges key");

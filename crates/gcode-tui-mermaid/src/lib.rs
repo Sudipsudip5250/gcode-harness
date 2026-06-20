@@ -157,20 +157,7 @@ use cache_render::{
     CachedDiagram, MermaidCache, RENDER_CACHE_MAX, RENDER_WIDTH_BUCKET_CELLS,
     bump_deferred_render_epoch, get_cached_diagram,
 };
-#[cfg(test)]
-use cache_render::{
-    cached_width_satisfies, calculate_render_size, estimate_diagram_size, parse_cache_filename,
-    retarget_svg_for_png,
-};
-#[cfg(test)]
-use content_render::image_widget_placeholder;
-#[cfg(test)]
-use runtime::{PickerInitMode, infer_protocol_from_env, picker_init_mode_from_probe_env};
 use viewport_render::clear_image_area;
-#[cfg(test)]
-use viewport_render::{ensure_kitty_viewport_state, render_kitty_virtual_viewport};
-#[cfg(test)]
-use widget_render::set_cell_if_visible;
 use widget_render::{BORDER_WIDTH, draw_left_border, render_stateful_image_safe};
 
 /// Render Mermaid source images a bit denser than the immediate terminal-pixel
@@ -693,6 +680,7 @@ pub fn debug_flicker_benchmark(steps: usize) -> MermaidFlickerBenchmark {
 }
 
 #[cfg(test)]
+#[allow(dead_code)]
 fn parse_proc_status_value_bytes(status: &str, key: &str) -> Option<u64> {
     debug_support::parse_proc_status_value_bytes(status, key)
 }
@@ -758,7 +746,7 @@ pub fn debug_image_state() -> Vec<ImageStateInfo> {
         state
             .iter()
             .map(|(hash, img_state)| ImageStateInfo {
-                hash: format!("{:016x}", hash),
+                hash: format!("{hash:016x}"),
                 resize_mode: match img_state.resize_mode {
                     ResizeMode::Fit => "Fit".to_string(),
                     ResizeMode::Scale => "Scale".to_string(),
@@ -813,7 +801,7 @@ pub fn debug_render(content: &str) -> TestRenderResult {
     let result = render_mermaid_sized(content, Some(80)); // Use 80 cols as test width
 
     let render_ms = start.elapsed().as_secs_f32() * 1000.0;
-    let protocol = protocol_type().map(|p| format!("{:?}", p));
+    let protocol = protocol_type().map(|p| format!("{p:?}"));
 
     match result {
         RenderResult::Image {
@@ -836,7 +824,7 @@ pub fn debug_render(content: &str) -> TestRenderResult {
 
             TestRenderResult {
                 success: true,
-                hash: Some(format!("{:016x}", hash)),
+                hash: Some(format!("{hash:016x}")),
                 width: Some(width),
                 height: Some(height),
                 path: Some(path.to_string_lossy().to_string()),
@@ -1091,7 +1079,7 @@ pub fn debug_test_scroll(content: Option<&str>) -> ScrollTestResult {
     };
 
     ScrollTestResult {
-        hash: format!("{:016x}", hash),
+        hash: format!("{hash:016x}"),
         frames_rendered: frames.iter().filter(|f| f.rendered).count(),
         resize_mode_changes: mode_changes,
         skipped_renders: final_skipped - initial_skipped,

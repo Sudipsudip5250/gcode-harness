@@ -164,7 +164,7 @@ impl TagEntry {
     pub fn new(name: impl Into<String>) -> Self {
         let name = name.into();
         Self {
-            id: format!("tag:{}", name),
+            id: format!("tag:{name}"),
             name,
             description: None,
             count: 0,
@@ -202,7 +202,7 @@ impl ClusterEntry {
         let id = id.into();
         let now = Utc::now();
         Self {
-            id: format!("cluster:{}", id),
+            id: format!("cluster:{id}"),
             name: None,
             centroid: Vec::new(),
             member_count: 0,
@@ -291,7 +291,7 @@ impl MemoryGraph {
         // Create tag nodes and edges for existing tags
         for tag_name in &entry.tags {
             self.ensure_tag(tag_name);
-            let tag_id = format!("tag:{}", tag_name);
+            let tag_id = format!("tag:{tag_name}");
             self.add_edge_internal(&id, &tag_id, EdgeKind::HasTag);
 
             // Increment tag count
@@ -364,7 +364,7 @@ impl MemoryGraph {
 
     /// Ensure a tag exists, creating it if necessary
     pub fn ensure_tag(&mut self, name: &str) -> &TagEntry {
-        let tag_id = format!("tag:{}", name);
+        let tag_id = format!("tag:{name}");
         self.tags
             .entry(tag_id.clone())
             .or_insert_with(|| TagEntry::new(name))
@@ -374,7 +374,7 @@ impl MemoryGraph {
     pub fn tag_memory(&mut self, memory_id: &str, tag_name: &str) {
         // Ensure tag exists
         self.ensure_tag(tag_name);
-        let tag_id = format!("tag:{}", tag_name);
+        let tag_id = format!("tag:{tag_name}");
 
         // Check if edge already exists
         if let Some(edges) = self.edges.get(memory_id)
@@ -404,7 +404,7 @@ impl MemoryGraph {
 
     /// Remove a tag from a memory
     pub fn untag_memory(&mut self, memory_id: &str, tag_name: &str) {
-        let tag_id = format!("tag:{}", tag_name);
+        let tag_id = format!("tag:{tag_name}");
 
         // Remove edge
         if let Some(edges) = self.edges.get_mut(memory_id) {
@@ -430,7 +430,7 @@ impl MemoryGraph {
 
     /// Get all memories with a specific tag
     pub fn get_memories_by_tag(&self, tag_name: &str) -> Vec<&MemoryEntry> {
-        let tag_id = format!("tag:{}", tag_name);
+        let tag_id = format!("tag:{tag_name}");
 
         // Find all sources pointing to this tag via HasTag
         self.reverse_edges
@@ -636,7 +636,7 @@ impl MemoryGraph {
             // Create tag nodes and edges
             for tag_name in &tags {
                 graph.ensure_tag(tag_name);
-                let tag_id = format!("tag:{}", tag_name);
+                let tag_id = format!("tag:{tag_name}");
                 graph.add_edge_internal(&memory_id, &tag_id, EdgeKind::HasTag);
 
                 // Update tag count

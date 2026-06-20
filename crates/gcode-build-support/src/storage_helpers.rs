@@ -48,7 +48,7 @@ pub fn canary_binary_path() -> Result<PathBuf> {
 pub fn migration_context_path(session_id: &str) -> Result<PathBuf> {
     Ok(builds_dir()?
         .join("migrations")
-        .join(format!("{}.json", session_id)))
+        .join(format!("{session_id}.json")))
 }
 
 /// Get path to stable version file (watched by other sessions)

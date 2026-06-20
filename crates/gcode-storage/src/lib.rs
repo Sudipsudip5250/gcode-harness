@@ -200,7 +200,7 @@ pub fn write_text_secret(path: &Path, content: &str) -> Result<()> {
 
 pub fn upsert_env_file_value(path: &Path, env_key: &str, value: Option<&str>) -> Result<()> {
     let existing = std::fs::read_to_string(path).unwrap_or_default();
-    let prefix = format!("{}=", env_key);
+    let prefix = format!("{env_key}=");
 
     let mut lines = Vec::new();
     let mut replaced = false;
@@ -208,7 +208,7 @@ pub fn upsert_env_file_value(path: &Path, env_key: &str, value: Option<&str>) ->
         if line.starts_with(&prefix) {
             replaced = true;
             if let Some(value) = value {
-                lines.push(format!("{}={}", env_key, value));
+                lines.push(format!("{env_key}={value}"));
             }
         } else {
             lines.push(line.to_string());
@@ -216,7 +216,7 @@ pub fn upsert_env_file_value(path: &Path, env_key: &str, value: Option<&str>) ->
     }
 
     if !replaced && let Some(value) = value {
-        lines.push(format!("{}={}", env_key, value));
+        lines.push(format!("{env_key}={value}"));
     }
 
     let mut content = lines.join("\n");
@@ -258,7 +258,7 @@ fn write_bytes_inner(path: &Path, bytes: &[u8], durable: bool) -> Result<()> {
 
     let pid = std::process::id();
     let nonce: u64 = rand::random();
-    let tmp_path = path.with_extension(format!("tmp.{}.{}", pid, nonce));
+    let tmp_path = path.with_extension(format!("tmp.{pid}.{nonce}"));
 
     let result = (|| -> Result<()> {
         let file = std::fs::File::create(&tmp_path)?;
@@ -266,7 +266,7 @@ fn write_bytes_inner(path: &Path, bytes: &[u8], durable: bool) -> Result<()> {
         writer.write_all(bytes)?;
         let file = writer
             .into_inner()
-            .map_err(|e| anyhow::anyhow!("flush failed: {}", e))?;
+            .map_err(|e| anyhow::anyhow!("flush failed: {e}"))?;
 
         if durable {
             file.sync_all()?;

@@ -1513,7 +1513,7 @@ pub fn format_comm_members(current_session_id: &str, members: &[AgentInfo]) -> S
             let status = member.status.as_deref().unwrap_or("unknown");
             let is_me = session == current_session_id;
             let role_label = if role != "agent" {
-                format!(" [{}]", role)
+                format!(" [{role}]")
             } else {
                 String::new()
             };
@@ -1532,7 +1532,7 @@ pub fn format_comm_members(current_session_id: &str, members: &[AgentInfo]) -> S
                 extra_meta.push(format!("attachments={attachments}"));
             }
             if let Some(age_secs) = member.status_age_secs {
-                extra_meta.push(format!("status_age={}s", age_secs));
+                extra_meta.push(format!("status_age={age_secs}s"));
             }
             let meta_suffix = if extra_meta.is_empty() {
                 String::new()
@@ -1548,12 +1548,12 @@ pub fn format_comm_members(current_session_id: &str, members: &[AgentInfo]) -> S
                 member
                     .detail
                     .as_deref()
-                    .map(|detail| format!(" — {}", detail))
+                    .map(|detail| format!(" — {detail}"))
                     .unwrap_or_default(),
                 if files.is_empty() {
                     String::new()
                 } else {
-                    format!("\n    Files: {}", files)
+                    format!("\n    Files: {files}")
                 },
                 meta_suffix
             ));
@@ -1564,7 +1564,7 @@ pub fn format_comm_members(current_session_id: &str, members: &[AgentInfo]) -> S
 
 pub fn format_comm_tool_summary(target: &str, calls: &[ToolCallSummary]) -> String {
     if calls.is_empty() {
-        format!("No tool calls found for {}", target)
+        format!("No tool calls found for {target}")
     } else {
         let call_count = calls.len();
         let mut output = format!(
@@ -1590,9 +1590,9 @@ pub fn format_comm_status_snapshot(snapshot: &AgentStatusSnapshot) -> String {
         "Status snapshot for {} ({})\n\n",
         target, snapshot.session_id
     );
-    output.push_str(&format!("  Lifecycle: {}", status));
+    output.push_str(&format!("  Lifecycle: {status}"));
     if let Some(detail) = snapshot.detail.as_deref() {
-        output.push_str(&format!(" — {}", detail));
+        output.push_str(&format!(" — {detail}"));
     }
     output.push('\n');
 
@@ -1605,13 +1605,13 @@ pub fn format_comm_status_snapshot(snapshot: &AgentStatusSnapshot) -> String {
             _ => "idle".to_string(),
         })
         .unwrap_or_else(|| "idle".to_string());
-    output.push_str(&format!("  Activity: {}\n", activity));
+    output.push_str(&format!("  Activity: {activity}\n"));
 
     if let Some(role) = snapshot.role.as_deref() {
-        output.push_str(&format!("  Role: {}\n", role));
+        output.push_str(&format!("  Role: {role}\n"));
     }
     if let Some(swarm_id) = snapshot.swarm_id.as_deref() {
-        output.push_str(&format!("  Swarm: {}\n", swarm_id));
+        output.push_str(&format!("  Swarm: {swarm_id}\n"));
     }
 
     let mut meta = Vec::new();
@@ -1622,10 +1622,10 @@ pub fn format_comm_status_snapshot(snapshot: &AgentStatusSnapshot) -> String {
         meta.push(format!("attachments={attachments}"));
     }
     if let Some(age_secs) = snapshot.status_age_secs {
-        meta.push(format!("status_age={}s", age_secs));
+        meta.push(format!("status_age={age_secs}s"));
     }
     if let Some(age_secs) = snapshot.joined_age_secs {
-        meta.push(format!("joined={}s", age_secs));
+        meta.push(format!("joined={age_secs}s"));
     }
     if !meta.is_empty() {
         output.push_str(&format!("  Meta: {}\n", meta.join(" · ")));
@@ -1634,7 +1634,7 @@ pub fn format_comm_status_snapshot(snapshot: &AgentStatusSnapshot) -> String {
     if snapshot.provider_name.is_some() || snapshot.provider_model.is_some() {
         let provider = snapshot.provider_name.as_deref().unwrap_or("unknown");
         let model = snapshot.provider_model.as_deref().unwrap_or("unknown");
-        output.push_str(&format!("  Provider: {} / {}\n", provider, model));
+        output.push_str(&format!("  Provider: {provider} / {model}\n"));
     }
 
     if snapshot.files_touched.is_empty() {
@@ -1702,7 +1702,7 @@ pub fn format_comm_plan_status(summary: &PlanGraphStatus) -> String {
 
 pub fn format_comm_context_history(target: &str, messages: &[HistoryMessage]) -> String {
     if messages.is_empty() {
-        format!("No conversation history for {}", target)
+        format!("No conversation history for {target}")
     } else {
         let mut output = format!(
             "Conversation context for {} ({} messages):\n\n",
@@ -1761,9 +1761,9 @@ pub fn format_comm_awaited_members_with_reports(
     reports: &HashMap<String, String>,
 ) -> String {
     let mut output = if completed {
-        format!("All members done. {}\n", summary)
+        format!("All members done. {summary}\n")
     } else {
-        format!("Await incomplete. {}\n", summary)
+        format!("Await incomplete. {summary}\n")
     };
 
     if !members.is_empty() {

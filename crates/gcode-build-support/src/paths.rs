@@ -154,10 +154,7 @@ fn display_build_command(program: &str, specs: &[(&str, &str)]) -> String {
     specs
         .iter()
         .map(|(package, binary)| {
-            format!(
-                "{} build --profile {} -p {} --bin {}",
-                program, SELFDEV_CARGO_PROFILE, package, binary
-            )
+            format!("{program} build --profile {SELFDEV_CARGO_PROFILE} -p {package} --bin {binary}")
         })
         .collect::<Vec<_>>()
         .join(" && ")

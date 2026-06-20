@@ -135,7 +135,7 @@ pub fn concise_tool_error_summary(content: &str) -> Option<String> {
                 ));
             }
             if detail.starts_with("invalid type") || detail.starts_with("unknown variant") {
-                return Some(format!("invalid input: {}", detail));
+                return Some(format!("invalid input: {detail}"));
             }
             if detail.contains("source metadata") && detail.contains("was for") {
                 return Some("build source changed before reload".to_string());
@@ -153,12 +153,12 @@ pub fn concise_tool_error_summary(content: &str) -> Option<String> {
             && let Ok(code) = rest.trim().parse::<i32>()
             && code != 0
         {
-            return Some(format!("exit {}", code));
+            return Some(format!("exit {code}"));
         }
         if let Some(rest) = line.strip_prefix("--- Command finished with exit code:") {
             let code = rest.trim().trim_end_matches('-').trim();
             if code != "0" && !code.is_empty() {
-                return Some(format!("exit {}", code));
+                return Some(format!("exit {code}"));
             }
         }
     }

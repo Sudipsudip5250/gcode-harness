@@ -423,7 +423,7 @@ pub fn format_binding(binding: &KeyBinding) -> String {
         KeyCode::Insert => "Insert".to_string(),
         KeyCode::Delete => "Delete".to_string(),
         KeyCode::Backspace => "Backspace".to_string(),
-        KeyCode::F(number) => format!("F{}", number),
+        KeyCode::F(number) => format!("F{number}"),
         KeyCode::Char(' ') => "Space".to_string(),
         KeyCode::Char(c) => c.to_ascii_uppercase().to_string(),
         _ => "Key".to_string(),

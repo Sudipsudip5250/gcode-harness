@@ -118,8 +118,7 @@ pub fn init_picker() {
             Ok(picker) => Some(picker),
             Err(err) => {
                 crate::log_warn(&format!(
-                    "Mermaid picker probe failed ({}); using fast picker fallback",
-                    err
+                    "Mermaid picker probe failed ({err}); using fast picker fallback"
                 ));
                 Some(fast_picker())
             }
@@ -212,9 +211,7 @@ pub fn register_inline_image(media_type: &str, data_b64: &str) -> Option<(u64, u
         let image = image::load_from_memory(&bytes).ok()?;
         let (width, height) = image.dimensions();
         let ext = inline_image_extension(media_type);
-        let path = cache
-            .cache_dir
-            .join(format!("{:016x}_inline.{}", hash, ext));
+        let path = cache.cache_dir.join(format!("{hash:016x}_inline.{ext}"));
         if !path.exists() {
             fs::write(&path, &bytes).ok()?;
         }

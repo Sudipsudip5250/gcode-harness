@@ -3,7 +3,7 @@ use chrono::Utc;
 pub fn new_id(prefix: &str) -> String {
     let ts = Utc::now().timestamp_millis();
     let rand: u64 = rand::random();
-    format!("{}_{}_{}", prefix, ts, rand)
+    format!("{prefix}_{ts}_{rand}")
 }
 
 /// Server/location names with their icons.
@@ -187,7 +187,7 @@ pub fn new_memorable_server_id() -> (String, String) {
     let (word, _) = SERVER_MODIFIERS[idx];
 
     let short_name = word.to_string();
-    let full_id = format!("server_{}_{ts}_{rand:016x}", word);
+    let full_id = format!("server_{word}_{ts}_{rand:016x}");
 
     (full_id, short_name)
 }
@@ -217,7 +217,7 @@ pub fn new_memorable_session_id() -> (String, String) {
     let (word, _) = SESSION_NAMES[idx];
 
     let short_name = word.to_string();
-    let full_id = format!("session_{}_{ts}_{rand:016x}", word);
+    let full_id = format!("session_{word}_{ts}_{rand:016x}");
 
     (full_id, short_name)
 }
@@ -257,8 +257,7 @@ mod tests {
         let icon = session_icon(&short_name);
         assert_ne!(
             icon, "💫",
-            "Name '{}' should have a specific icon",
-            short_name
+            "Name '{short_name}' should have a specific icon"
         );
     }
 
@@ -300,8 +299,8 @@ mod tests {
     fn test_all_names_have_icons() {
         for (name, expected_icon) in SESSION_NAMES {
             let icon = session_icon(name);
-            assert_eq!(icon, *expected_icon, "Icon mismatch for '{}'", name);
-            assert_ne!(icon, "💫", "Name '{}' should have a specific icon", name);
+            assert_eq!(icon, *expected_icon, "Icon mismatch for '{name}'");
+            assert_ne!(icon, "💫", "Name '{name}' should have a specific icon");
         }
     }
 
@@ -322,8 +321,7 @@ mod tests {
         let icon = server_icon(&short_name);
         assert_ne!(
             icon, "🔮",
-            "Modifier '{}' should have a specific icon",
-            short_name
+            "Modifier '{short_name}' should have a specific icon"
         );
     }
 
@@ -360,12 +358,8 @@ mod tests {
     fn test_all_modifiers_have_icons() {
         for (name, expected_icon) in SERVER_MODIFIERS {
             let icon = server_icon(name);
-            assert_eq!(icon, *expected_icon, "Icon mismatch for '{}'", name);
-            assert_ne!(
-                icon, "🔮",
-                "Modifier '{}' should have a specific icon",
-                name
-            );
+            assert_eq!(icon, *expected_icon, "Icon mismatch for '{name}'");
+            assert_ne!(icon, "🔮", "Modifier '{name}' should have a specific icon");
         }
     }
 }

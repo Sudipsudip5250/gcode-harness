@@ -197,7 +197,7 @@ pub fn summarize_git_pull_failure(stderr: &[u8]) -> String {
     if line.eq_ignore_ascii_case("git pull failed") {
         "git pull failed".to_string()
     } else {
-        format!("git pull failed: {}", line)
+        format!("git pull failed: {line}")
     }
 }
 
@@ -246,15 +246,10 @@ pub fn verify_asset_checksum_text(contents: &str, asset_name: &str, bytes: &[u8]
     let checksums = parse_sha256sums(contents)?;
     let expected = checksums
         .get(asset_name)
-        .ok_or_else(|| anyhow::anyhow!("SHA256SUMS does not list {}", asset_name))?;
+        .ok_or_else(|| anyhow::anyhow!("SHA256SUMS does not list {asset_name}"))?;
     let actual = format!("{:x}", Sha256::digest(bytes));
     if !actual.eq_ignore_ascii_case(expected) {
-        anyhow::bail!(
-            "Checksum mismatch for {}: expected {}, got {}",
-            asset_name,
-            expected,
-            actual
-        );
+        anyhow::bail!("Checksum mismatch for {asset_name}: expected {expected}, got {actual}");
     }
     Ok(())
 }
@@ -277,7 +272,7 @@ pub fn version_is_newer(release: &str, current: &str) -> bool {
 pub fn format_download_progress_bar(progress: DownloadProgress) -> String {
     let human_downloaded = format_bytes(progress.downloaded);
     let Some(total) = progress.total.filter(|total| *total > 0) else {
-        return format!("Downloading update... {} downloaded", human_downloaded);
+        return format!("Downloading update... {human_downloaded} downloaded");
     };
 
     let ratio = (progress.downloaded as f64 / total as f64).clamp(0.0, 1.0);
@@ -307,7 +302,7 @@ pub fn format_bytes(bytes: u64) -> String {
     } else if bytes_f >= KIB {
         format!("{:.1} KiB", bytes_f / KIB)
     } else {
-        format!("{} B", bytes)
+        format!("{bytes} B")
     }
 }
 

@@ -212,12 +212,12 @@ impl StoredMessage {
                     }
                 }
                 ContentBlock::ToolUse { name, .. } => {
-                    return format!("[tool: {}]", name);
+                    return format!("[tool: {name}]");
                 }
                 ContentBlock::ToolResult { content, .. } => {
                     let preview = content.trim().replace('\n', " ");
                     if !preview.is_empty() {
-                        return format!("[result: {}]", preview);
+                        return format!("[result: {preview}]");
                     }
                 }
                 _ => {}
@@ -659,16 +659,16 @@ pub fn format_session_search_results(
         output.push_str(&format!("- Source: `{}`\n", result.source));
         output.push_str(&format!("- Session ID: `{}`\n", result.session_id));
         if let Some(title) = &result.title {
-            output.push_str(&format!("- Title: {}\n", title));
+            output.push_str(&format!("- Title: {title}\n"));
         }
         if let Some(dir) = &result.working_dir {
-            output.push_str(&format!("- Working dir: `{}`\n", dir));
+            output.push_str(&format!("- Working dir: `{dir}`\n"));
         }
         if let Some(provider_key) = &result.provider_key {
-            output.push_str(&format!("- Provider: `{}`\n", provider_key));
+            output.push_str(&format!("- Provider: `{provider_key}`\n"));
         }
         if let Some(model) = &result.model {
-            output.push_str(&format!("- Model: `{}`\n", model));
+            output.push_str(&format!("- Model: `{model}`\n"));
         }
         output.push_str(&format!(
             "- Updated: {}\n- Match: {}",
@@ -680,7 +680,7 @@ pub fn format_session_search_results(
         }
         output.push_str(&format!(" ({})", result.role));
         if let Some(message_id) = &result.message_id {
-            output.push_str(&format!(", id `{}`", message_id));
+            output.push_str(&format!(", id `{message_id}`"));
         }
         if let Some(timestamp) = result.message_timestamp {
             output.push_str(&format!(
@@ -810,10 +810,10 @@ pub fn extract_session_search_snippet(
 
         let mut snippet = text[start..end].to_string();
         if start > 0 {
-            snippet = format!("...{}", snippet);
+            snippet = format!("...{snippet}");
         }
         if end < text.len() {
-            snippet = format!("{}...", snippet);
+            snippet = format!("{snippet}...");
         }
         snippet
     } else {

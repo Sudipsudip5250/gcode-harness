@@ -219,10 +219,7 @@ impl TaskControlAction {
 
 pub fn combine_assignment_text(content: &str, message: Option<&str>) -> String {
     if let Some(extra) = message {
-        format!(
-            "{}\n\nAdditional coordinator instructions:\n{}",
-            content, extra
-        )
+        format!("{content}\n\nAdditional coordinator instructions:\n{extra}")
     } else {
         content.to_string()
     }
@@ -251,7 +248,7 @@ pub fn build_control_assignment_text(
     }
     parts.push(content.to_string());
     if let Some(extra) = message {
-        parts.push(format!("Additional coordinator instructions:\n{}", extra));
+        parts.push(format!("Additional coordinator instructions:\n{extra}"));
     }
     parts.join("\n\n")
 }
@@ -270,32 +267,25 @@ pub fn task_control_action_allows_status(action: TaskControlAction, status: &str
 pub fn task_control_status_error(action: TaskControlAction, status: &str, task_id: &str) -> String {
     match action {
         TaskControlAction::Start => format!(
-            "Task '{}' is '{}' and cannot be started. Use start only for queued assignments.",
-            task_id, status
+            "Task '{task_id}' is '{status}' and cannot be started. Use start only for queued assignments."
         ),
         TaskControlAction::Wake => format!(
-            "Task '{}' is '{}' and cannot be woken. Use wake only for queued assignments.",
-            task_id, status
+            "Task '{task_id}' is '{status}' and cannot be woken. Use wake only for queued assignments."
         ),
-        TaskControlAction::Resume => format!(
-            "Task '{}' is '{}' and cannot be resumed safely.",
-            task_id, status
-        ),
+        TaskControlAction::Resume => {
+            format!("Task '{task_id}' is '{status}' and cannot be resumed safely.")
+        }
         TaskControlAction::Retry => format!(
-            "Task '{}' is '{}' and cannot be retried. Retry is only for failed or stale work.",
-            task_id, status
+            "Task '{task_id}' is '{status}' and cannot be retried. Retry is only for failed or stale work."
         ),
-        TaskControlAction::Reassign => format!(
-            "Task '{}' is already complete. Reassign unfinished work instead.",
-            task_id
-        ),
-        TaskControlAction::Replace => format!(
-            "Task '{}' is already complete. Replace is only for unfinished work.",
-            task_id
-        ),
+        TaskControlAction::Reassign => {
+            format!("Task '{task_id}' is already complete. Reassign unfinished work instead.")
+        }
+        TaskControlAction::Replace => {
+            format!("Task '{task_id}' is already complete. Replace is only for unfinished work.")
+        }
         TaskControlAction::Salvage => format!(
-            "Task '{}' is already complete. Salvage is only for unfinished or failed work.",
-            task_id
+            "Task '{task_id}' is already complete. Salvage is only for unfinished or failed work."
         ),
     }
 }
@@ -590,7 +580,7 @@ pub fn assignment_affinities_for_task(
     let loads = assignment_loads(plan);
 
     let Some(task) = plan.items.iter().find(|item| item.id == task_id) else {
-        return Err(format!("Task '{}' not found in swarm plan", task_id));
+        return Err(format!("Task '{task_id}' not found in swarm plan"));
     };
 
     let mut dependency_carryover = HashMap::<String, usize>::new();

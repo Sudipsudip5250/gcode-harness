@@ -138,7 +138,7 @@ fn test_protocol_enum_roundtrips_cover_wire_names() -> Result<()> {
     ];
     for (mode, wire) in transcript_modes {
         let json = serde_json::to_string(&mode)?;
-        assert_eq!(json, format!("\"{}\"", wire));
+        assert_eq!(json, format!("\"{wire}\""));
         let decoded: TranscriptMode = serde_json::from_str(&json)?;
         assert_eq!(decoded, mode);
     }
@@ -150,7 +150,7 @@ fn test_protocol_enum_roundtrips_cover_wire_names() -> Result<()> {
     ];
     for (mode, wire) in delivery_modes {
         let json = serde_json::to_string(&mode)?;
-        assert_eq!(json, format!("\"{}\"", wire));
+        assert_eq!(json, format!("\"{wire}\""));
         let decoded: CommDeliveryMode = serde_json::from_str(&json)?;
         assert_eq!(decoded, mode);
     }
@@ -163,7 +163,7 @@ fn test_protocol_enum_roundtrips_cover_wire_names() -> Result<()> {
     ];
     for (feature, wire) in feature_toggles {
         let json = serde_json::to_string(&feature)?;
-        assert_eq!(json, format!("\"{}\"", wire));
+        assert_eq!(json, format!("\"{wire}\""));
         let decoded: FeatureToggle = serde_json::from_str(&json)?;
         assert_eq!(decoded, feature);
     }

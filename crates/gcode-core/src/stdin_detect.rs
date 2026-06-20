@@ -29,7 +29,7 @@ pub mod linux {
 
     fn check_inner(pid: u32, strict: bool) -> StdinState {
         // First try /proc/PID/syscall (most accurate - shows exact syscall + fd)
-        if let Ok(contents) = std::fs::read_to_string(format!("/proc/{}/syscall", pid)) {
+        if let Ok(contents) = std::fs::read_to_string(format!("/proc/{pid}/syscall")) {
             // Format: "syscall_nr fd ..."
             // read = 0 on x86_64, 63 on aarch64
             // We want: read(0, ...) i.e. syscall read on fd 0 (stdin)
@@ -50,7 +50,7 @@ pub mod linux {
         // This is less exact than /proc/PID/syscall, so pair it with an fd 0
         // pipe/pty check. For child processes, check_process_tree also verifies
         // the child shares the parent's stdin pipe before calling strict mode.
-        if let Ok(wchan) = std::fs::read_to_string(format!("/proc/{}/wchan", pid)) {
+        if let Ok(wchan) = std::fs::read_to_string(format!("/proc/{pid}/wchan")) {
             let wchan = wchan.trim();
             if (wchan == "n_tty_read"
                 || wchan == "wait_woken"
@@ -72,7 +72,7 @@ pub mod linux {
     }
 
     fn stdin_is_pipe_or_pty(pid: u32) -> bool {
-        if let Ok(link) = std::fs::read_link(format!("/proc/{}/fd/0", pid)) {
+        if let Ok(link) = std::fs::read_link(format!("/proc/{pid}/fd/0")) {
             let path = link.to_string_lossy();
             return path.contains("pipe") || path.contains("pts") || path.contains("ptmx");
         }
@@ -89,7 +89,7 @@ pub mod linux {
 
         // Get the parent's stdin fd link target so we can verify children
         // share the same pipe (not just any pipe on fd 0)
-        let parent_stdin_link = std::fs::read_link(format!("/proc/{}/fd/0", pid))
+        let parent_stdin_link = std::fs::read_link(format!("/proc/{pid}/fd/0"))
             .ok()
             .map(|p| p.to_string_lossy().to_string());
 
@@ -98,8 +98,7 @@ pub mod linux {
             for entry in entries.flatten() {
                 if let Ok(name) = entry.file_name().into_string()
                     && let Ok(child_pid) = name.parse::<u32>()
-                    && let Ok(status) =
-                        std::fs::read_to_string(format!("/proc/{}/status", child_pid))
+                    && let Ok(status) = std::fs::read_to_string(format!("/proc/{child_pid}/status"))
                 {
                     for line in status.lines() {
                         if let Some(ppid_str) = line.strip_prefix("PPid:\t")
@@ -107,7 +106,7 @@ pub mod linux {
                         {
                             if let Some(ref parent_link) = parent_stdin_link {
                                 let child_link =
-                                    std::fs::read_link(format!("/proc/{}/fd/0", child_pid))
+                                    std::fs::read_link(format!("/proc/{child_pid}/fd/0"))
                                         .ok()
                                         .map(|p| p.to_string_lossy().to_string());
                                 if child_link.as_deref() != Some(parent_link) {

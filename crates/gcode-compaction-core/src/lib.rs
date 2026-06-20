@@ -102,7 +102,7 @@ pub struct CompactionStats {
 }
 
 pub fn compacted_summary_text_block(summary: &str) -> String {
-    format!("## Previous Conversation Summary\n\n{}\n\n---\n\n", summary)
+    format!("## Previous Conversation Summary\n\n{summary}\n\n---\n\n")
 }
 
 pub fn build_compaction_prompt(
@@ -118,7 +118,7 @@ pub fn build_compaction_prompt(
         conversation_text
             .push_str("\n\n... [earlier conversation truncated to fit context window]\n");
     }
-    format!("{}\n\n---\n\n{}", conversation_text, SUMMARY_PROMPT)
+    format!("{conversation_text}\n\n---\n\n{SUMMARY_PROMPT}")
 }
 
 pub fn build_compaction_conversation_text(
@@ -137,7 +137,7 @@ pub fn build_compaction_conversation_text(
             Role::User => "User",
             Role::Assistant => "Assistant",
         };
-        conversation_text.push_str(&format!("**{}:**\n", role_str));
+        conversation_text.push_str(&format!("**{role_str}:**\n"));
         for block in &msg.content {
             match block {
                 ContentBlock::Text { text, .. } => {
@@ -145,7 +145,7 @@ pub fn build_compaction_conversation_text(
                     conversation_text.push('\n');
                 }
                 ContentBlock::ToolUse { name, input, .. } => {
-                    conversation_text.push_str(&format!("[Tool: {} - {}]\n", name, input));
+                    conversation_text.push_str(&format!("[Tool: {name} - {input}]\n"));
                 }
                 ContentBlock::ToolResult { content, .. } => {
                     let truncated = if content.len() > 500 {
@@ -153,7 +153,7 @@ pub fn build_compaction_conversation_text(
                     } else {
                         content.clone()
                     };
-                    conversation_text.push_str(&format!("[Result: {}]\n", truncated));
+                    conversation_text.push_str(&format!("[Result: {truncated}]\n"));
                 }
                 ContentBlock::Reasoning { .. } => {}
                 ContentBlock::Image { .. } => conversation_text.push_str("[Image]\n"),
@@ -216,10 +216,10 @@ pub fn safe_compaction_cutoff(messages: &[Message], initial_cutoff: usize) -> us
                     available_tool_ids.insert(id.clone());
                     missing_tool_ids.remove(id);
                 }
-                ContentBlock::ToolResult { tool_use_id, .. } => {
-                    if !available_tool_ids.contains(tool_use_id) {
-                        missing_tool_ids.insert(tool_use_id.clone());
-                    }
+                ContentBlock::ToolResult { tool_use_id, .. }
+                    if !available_tool_ids.contains(tool_use_id) =>
+                {
+                    missing_tool_ids.insert(tool_use_id.clone());
                 }
                 _ => {}
             }
@@ -239,10 +239,10 @@ pub fn safe_compaction_cutoff(messages: &[Message], initial_cutoff: usize) -> us
                     available_tool_ids.insert(id.clone());
                     missing_tool_ids.remove(id);
                 }
-                ContentBlock::ToolResult { tool_use_id, .. } => {
-                    if !available_tool_ids.contains(tool_use_id) {
-                        missing_tool_ids.insert(tool_use_id.clone());
-                    }
+                ContentBlock::ToolResult { tool_use_id, .. }
+                    if !available_tool_ids.contains(tool_use_id) =>
+                {
+                    missing_tool_ids.insert(tool_use_id.clone());
                 }
                 _ => {}
             }
@@ -470,10 +470,7 @@ pub fn emergency_truncated_tool_result(content: &str, max_chars: usize) -> Strin
     let head = truncate_str_boundary(content, keep_head);
     let tail = tail_str_boundary(content, keep_tail);
     let truncated_len = original_len.saturating_sub(head.len() + tail.len());
-    format!(
-        "{}\n\n... [{} chars truncated for context recovery] ...\n\n{}",
-        head, truncated_len, tail,
-    )
+    format!("{head}\n\n... [{truncated_len} chars truncated for context recovery] ...\n\n{tail}",)
 }
 
 pub fn tail_str_boundary(value: &str, max_bytes: usize) -> &str {

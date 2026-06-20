@@ -87,10 +87,7 @@ fn main() {
                 .find(|d| d.starts_with("tag: v"))
                 .and_then(|d| d.strip_prefix("tag: "))
                 .unwrap_or("");
-            Some(format!(
-                "{}\x1e{}\x1e{}\x1e{}",
-                hash, tag, timestamp, subject
-            ))
+            Some(format!("{hash}\x1e{tag}\x1e{timestamp}\x1e{subject}"))
         })
         .collect::<Vec<_>>()
         .join("\x1f");
@@ -101,22 +98,22 @@ fn main() {
     //   Dirty:   v0.2.17-dev (abc1234, dirty)
     let is_release = std::env::var("GCODE_RELEASE_BUILD").is_ok();
     let version = if is_release {
-        format!("v{}.{}.{} ({})", major, minor, patch, git_hash)
+        format!("v{major}.{minor}.{patch} ({git_hash})")
     } else if dirty {
-        format!("v{}.{}.{}-dev ({}, dirty)", major, minor, patch, git_hash)
+        format!("v{major}.{minor}.{patch}-dev ({git_hash}, dirty)")
     } else {
-        format!("v{}.{}.{}-dev ({})", major, minor, patch, git_hash)
+        format!("v{major}.{minor}.{patch}-dev ({git_hash})")
     };
 
     // Set environment variables for compilation
-    println!("cargo:rustc-env=GCODE_GIT_HASH={}", git_hash);
-    println!("cargo:rustc-env=GCODE_GIT_DATE={}", git_date);
-    println!("cargo:rustc-env=GCODE_VERSION={}", version);
-    println!("cargo:rustc-env=GCODE_SEMVER={}", build_semver);
-    println!("cargo:rustc-env=GCODE_BASE_SEMVER={}", base_semver);
-    println!("cargo:rustc-env=GCODE_UPDATE_SEMVER={}", update_semver);
-    println!("cargo:rustc-env=GCODE_GIT_TAG={}", git_tag);
-    println!("cargo:rustc-env=GCODE_CHANGELOG={}", changelog);
+    println!("cargo:rustc-env=GCODE_GIT_HASH={git_hash}");
+    println!("cargo:rustc-env=GCODE_GIT_DATE={git_date}");
+    println!("cargo:rustc-env=GCODE_VERSION={version}");
+    println!("cargo:rustc-env=GCODE_SEMVER={build_semver}");
+    println!("cargo:rustc-env=GCODE_BASE_SEMVER={base_semver}");
+    println!("cargo:rustc-env=GCODE_UPDATE_SEMVER={update_semver}");
+    println!("cargo:rustc-env=GCODE_GIT_TAG={git_tag}");
+    println!("cargo:rustc-env=GCODE_CHANGELOG={changelog}");
 
     // Forward GCODE_RELEASE_BUILD env var if set (CI sets this for release binaries)
     if std::env::var("GCODE_RELEASE_BUILD").is_ok() {

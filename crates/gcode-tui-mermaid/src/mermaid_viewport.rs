@@ -1,4 +1,5 @@
 use super::*;
+use ratatui::buffer::CellDiffOption;
 
 fn load_source_image(hash: u64, path: &Path) -> Option<Arc<DynamicImage>> {
     if let Ok(mut cache) = SOURCE_CACHE.lock()
@@ -78,11 +79,9 @@ fn kitty_scaled_image_for_zoom(source: &DynamicImage, zoom_percent: u8) -> Dynam
 }
 
 fn div_ceil_u32_local(value: u32, divisor: u32) -> u32 {
-    if divisor == 0 {
-        value
-    } else {
-        value.saturating_add(divisor - 1) / divisor
-    }
+    value
+        .checked_div(divisor)
+        .map_or(value, |_| value.saturating_add(divisor - 1) / divisor)
 }
 
 fn kitty_full_rect_for_image(img: &DynamicImage, font_size: (u16, u16)) -> (u16, u16) {
@@ -185,7 +184,7 @@ pub(super) fn render_kitty_virtual_viewport(
             for x in 0..area.width {
                 if let Some(cell) = buf.cell_mut((area.left() + x, y)) {
                     cell.set_symbol(" ");
-                    cell.set_skip(false);
+                    cell.set_diff_option(CellDiffOption::None);
                 }
             }
             continue;
@@ -208,10 +207,10 @@ pub(super) fn render_kitty_virtual_viewport(
             if let Some(cell) = buf.cell_mut((area.left() + x, y)) {
                 if x < visible_width {
                     symbol.push('\u{10EEEE}');
-                    cell.set_skip(true);
+                    cell.set_diff_option(CellDiffOption::Skip);
                 } else {
                     cell.set_symbol(" ");
-                    cell.set_skip(false);
+                    cell.set_diff_option(CellDiffOption::None);
                 }
             }
         }
